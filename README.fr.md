@@ -44,8 +44,11 @@ Python, pandas, scikit-learn, XGBoost, FastAPI, Next.js, Docker.
 
 ## Données
 
-Source : *à compléter après le choix du dataset* (nom, lien, taille, date, licence). 
+Jeu de données : **Moroccan Used Cars Dataset (MUCars-2024)**, version 2.
+Auteurs : Tabarnoust, E., Mghari, M., Zaz, Y. (2024). Mendeley Data. DOI : [10.17632/vjrbcb2rrt.2](https://doi.org/10.17632/vjrbcb2rrt.2)
+Licence : CC BY 4.0.
 
+Le fichier brut n'est pas inclus dans ce dépôt. Télécharge `cars_dataframe.csv` depuis le lien ci-dessus et place-le dans `data/raw/`. 
 ## Statut
 
 En cours de développement.  
