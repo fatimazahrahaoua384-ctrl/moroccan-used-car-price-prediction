@@ -1,52 +1,50 @@
+🇬🇧 English | [🇫🇷 Français](README.fr.md)
 # moroccan-used-car-price-prediction
 End-to-end machine learning project predicting used car prices in Morocco: data collection, scikit-learn/XGBoost modeling, FastAPI backend, Next.js frontend, Docker deployment.
-# Moroccan Used Car Price Prediction
 
-Projet de machine learning de bout en bout : prédire le prix d'une voiture d'occasion au Maroc, de la collecte des données jusqu'à une application déployée.
+## 1. Problem
 
-## 1. Problème
+In Morocco, it is hard to know whether the asking price of a used car is fair. Buyers risk overpaying, and sellers may set a price that does not match the market. This project is for **both**: buyers who want to check a listing, and sellers who want to estimate the value of their car.
 
-Au Maroc, il est difficile de savoir si le prix d'une voiture d'occasion est juste. Les acheteurs risquent de payer trop cher, et les vendeurs de fixer un prix mal adapté au marché. Ce projet s'adresse aux **deux** : l'acheteur qui veut vérifier une annonce, et le vendeur qui veut estimer le prix de sa voiture.
+## 2. Goal
 
-## 2. Objectif
+A web application where the user enters a car's characteristics and gets a price estimate in Moroccan dirhams, from a model trained on a dataset of used car listings.
 
-Une application web où l'utilisateur saisit les caractéristiques d'une voiture et obtient une estimation de son prix en dirhams, grâce à un modèle entraîné sur des annonces réelles du marché marocain.
+## 3. Target variable
 
-## 3. Variable à prédire
+The **selling price** of the car, in Moroccan dirhams (MAD).
 
-Le **prix de vente** de la voiture, en dirhams marocains (MAD).
+## 4. Expected input features
 
-## 4. Variables d'entrée espérées
+- Brand and model
+- Year of first registration
+- Mileage
+- Fuel type (petrol, diesel, hybrid, etc.)
+- Transmission (manual, automatic)
+- Fiscal horsepower (CV)
+- City
+- Number of doors (if available)
 
-- Marque et modèle
-- Année de mise en circulation
-- Kilométrage
-- Type de carburant (essence, diesel, hybride…)
-- Boîte de vitesses (manuelle, automatique)
-- Puissance fiscale (CV)
-- Ville
-- Nombre de portes (si disponible)
+## 5. Success metric (initial hypothesis)
 
-## 5. Métrique de succès (hypothèse initiale)
+I will use the **MAE** (mean absolute error) because it is easy to interpret: on average, the model is off by X dirhams.
+Initial target: **MAE below 10% of the median price** in the dataset. This target will be revised after exploratory analysis.
+The model must also beat a simple baseline (linear regression).
 
-Je mesurerai la **MAE** (erreur absolue moyenne), car elle est facile à interpréter : en moyenne, le modèle se trompe de X dirhams.
-Objectif initial : **MAE inférieure à 10 % du prix médian** des voitures du jeu de données. Cet objectif sera révisé après l'analyse exploratoire.
-Le modèle devra aussi battre une baseline simple (régression linéaire).
+## 6. Out of scope (version 1)
 
-## 6. Hors périmètre (version 1)
+- Other vehicle types (motorcycles, vans, trucks)
+- Analysis of listing photos
+- Price prediction for new cars
 
-- Les autres véhicules (motos, utilitaires, camions)
-- L'analyse des photos des annonces
-- La prédiction des prix de voitures neuves
+## Data
 
-## Stack prévue
+Source: *to be completed once the dataset is chosen* (name, link, size, date, license).
+
+## Planned stack
 
 Python, pandas, scikit-learn, XGBoost, FastAPI, Next.js, Docker.
 
-## Données
+## Status
 
-Source : *à compléter après le choix du dataset* (nom, lien, taille, date, licence). 
-
-## Statut
-
-En cours de développement.  
+Work in progress.
