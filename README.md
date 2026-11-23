@@ -43,8 +43,20 @@ Dataset: **Moroccan Used Cars Dataset (MUCars-2024)**, Version 2.
 Authors: Tabarnoust, E., Mghari, M., Zaz, Y. (2024). Mendeley Data. DOI: [10.17632/vjrbcb2rrt.2](https://doi.org/10.17632/vjrbcb2rrt.2)
 License: CC BY 4.0.
 
-The raw file is not included in this repository. Download `cars_dataframe.csv` from the link above and place it in `data/raw/`.
+The raw file is not included in this repository. Download `cars_dataframe.csv` from the link above and place it in `data/raw/`. 
 
+- **Source:** Tabarnoust, E., Mghari, M., Zaz, Y. (2024). *Moroccan Used Cars Dataset
+  (MUCars-2024)*, Mendeley Data, V2. DOI: 10.17632/vjrbcb2rrt.2. License: CC BY 4.0.
+- **Content:** 101,896 used-car listings from Morocco (2024), 15 columns.
+- **Download:** get `cars_dataframe.csv` from the DOI link above and place it in
+  `data/raw/` (the file is not stored in this repository).
+- **Target:** `Price` is an **asking price**, not a final sale price. The currency
+  is not stated in the official description; MAD is assumed from the order of
+  magnitude (median of 110,000).
+
+## Out of scope
+
+- Cars priced below 5,000 MAD or above 1,000,000 MAD (removed as invalid or unreliable)
 ## Planned stack
 
 Python, pandas, scikit-learn, XGBoost, FastAPI, Next.js, Docker.

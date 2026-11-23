@@ -51,10 +51,59 @@ Notebook: `notebooks/01_first_look.ipynb` (2026-11-22)
 - Price quantiles: 1% = 10,500; 5% = 27,000; 25% = 60,000; 50% = 110,000; 75% = 170,000; 95% = 370,000; 99% = 760,000. These magnitudes look plausible for MAD, but the unit is still to be confirmed.
 - 126 prices are exactly 1, and others are 2, 3 or 4: placeholders, not real prices. 557 rows are below 5,000.
 - 123 prices are above 5 million (85 above 10 million). Several have repeated digits (99,999,999; 55,555,555; 33,333,333), which suggests data entry errors.
-- Plan: remove clearly invalid prices with a business rule before the split. Apply any statistical clipping after the split, on the training set only.
+- Plan: remove clearly invalid prices with a business rule before the split. Apply any statistical clipping after the split, on the training set only. 
+### décisions sur les prix
 
-## C. Existing project: Morocco-Used-Car-Market-Analysis
-(à compléter)
+- **Seuil minimum : 5 000 MAD.** Inspection de 30 lignes entre 1 000 et 5 000 MAD :
+  surtout de vieilles voitures (avant 2005) à prix plausibles, quelques erreurs
+  (Audi RS3 2024 à 2024 MAD, Clio 2021 à 1 600). Aucune valeur ronde dominante.
+  2 lignes avec prix égal à l'année (déjà couvertes par le seuil).
+- **Seuil maximum : 1 000 000 MAD.** Au-dessus de 5 M : erreurs évidentes (Polo 2001
+  à 32 M, Kangoo 2008 à 1 milliard). Entre 1 et 5 M : du luxe plausible (Cayenne,
+  RS6, Q8) mais aussi des erreurs sur marques économiques (Logan, Clio, Dokker,
+  Fiat 500). 111 lignes de marques économiques dépassent 1 M.
+- **Lignes concernées : 966 sur 76 413 avec prix (1,26 %).** Elles sont retirées
+  avant le split : ce sont des règles métier, pas des statistiques apprises.
+- **Hors périmètre du modèle :** voitures à moins de 5 000 MAD ou à plus de 1 M MAD.
+- **Unité du prix :** non précisée dans la description officielle (Mendeley, v2).
+  Hypothèse de travail : MAD, cohérente avec la médiane de 110 000. Le prix est un
+  prix annoncé, pas un prix de vente final.
 
-## D. What influences used car prices in Morocco
-(à compléter)
+## C. Lecture critique : Morocco-Used-Car-Market-Analysis
+
+**Ce que fait le projet :** [1 à 2 phrases : analyse exploratoire, modèle ou les deux ?]
+
+**Traitement des données**
+- Colonnes utilisées ou supprimées : [...]
+- Prix aberrants : [seuils choisis ou rien ? justifiés ?]
+- Valeurs manquantes : [supprimées ou imputées ? avant ou après un split ?]
+
+**Points solides :** [par exemple clarté, graphiques, taille des données]
+
+**Limites que j'ai remarquées :** [par exemple pas de split train/test, prix non
+nettoyés, pas de modèle déployé, pas de métrique d'erreur en dirhams]
+
+**Ce que je fais différemment :**
+- Nettoyage par règles métier avant le split, statistiques apprises sur le train seulement
+- Pipeline scikit-learn sauvegardé, puis API FastAPI et interface Next.js
+- Métrique d'erreur en dirhams (MAE) sur un test final séparé
+
+## D. Facteurs qui influencent le prix (hypothèses à vérifier dans l'EDA)
+
+| Facteur | Colonne | Effet attendu |
+|---|---|---|
+| Marque et modèle | Brand, Model | Les marques premium coûtent plus cher |
+| Âge | Year | Plus la voiture est récente, plus elle coûte cher |
+| Kilométrage | Mileage | Plus il est élevé, plus le prix baisse |
+| Carburant | Fuel | Diesel et essence se valorisent différemment |
+| Puissance fiscale | Fiscal Power | Plus élevée = plus de valeur ou plus de taxes |
+| Boîte de vitesses | Gearbox | Automatique souvent plus chère |
+| État | Condition | Meilleur état = prix plus élevé |
+| Origine | Origin | Importée ou dédouanée : effet à tester |
+| Première main | First Owner | Première main = prix plus élevé |
+| Équipements | Equipment | Plus d'options = prix plus élevé |
+| Localisation | Location, Sector | Écarts possibles entre villes |
+| Nombre de portes | Number of Doors | Effet probablement faible |
+
+**Variables à surveiller :** Origin, First Owner, Number of Doors et Condition ont
+des valeurs manquantes (3 à 14 %), à imputer dans le pipeline après le split.
