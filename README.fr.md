@@ -48,7 +48,20 @@ Jeu de données : **Moroccan Used Cars Dataset (MUCars-2024)**, version 2.
 Auteurs : Tabarnoust, E., Mghari, M., Zaz, Y. (2024). Mendeley Data. DOI : [10.17632/vjrbcb2rrt.2](https://doi.org/10.17632/vjrbcb2rrt.2)
 Licence : CC BY 4.0.
 
-Le fichier brut n'est pas inclus dans ce dépôt. Télécharge `cars_dataframe.csv` depuis le lien ci-dessus et place-le dans `data/raw/`. 
+Le fichier brut n'est pas inclus dans ce dépôt. Télécharge `cars_dataframe.csv` depuis le lien ci-dessus et place-le dans `data/raw/`.  
+
+- **Source :** Tabarnoust, E., Mghari, M., Zaz, Y. (2024). *Moroccan Used Cars Dataset
+  (MUCars-2024)*, Mendeley Data, V2. DOI : 10.17632/vjrbcb2rrt.2. Licence : CC BY 4.0.
+- **Contenu :** 101 896 annonces de voitures d'occasion au Maroc (2024), 15 colonnes.
+- **Téléchargement :** récupérer `cars_dataframe.csv` via le lien DOI ci-dessus et le
+  placer dans `data/raw/` (le fichier n'est pas dans ce dépôt).
+- **Cible :** `Price` est un **prix annoncé**, pas un prix de vente final. La devise
+  n'est pas précisée dans la description officielle ; le MAD est supposé d'après
+  l'ordre de grandeur (médiane de 110 000).
+
+## Hors périmètre
+
+- Voitures à moins de 5 000 MAD ou à plus de 1 000 000 MAD (retirées car invalides ou peu fiables)
 ## Statut
 
 En cours de développement.  

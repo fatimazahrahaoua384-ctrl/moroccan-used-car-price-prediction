@@ -106,4 +106,37 @@ nettoyés, pas de modèle déployé, pas de métrique d'erreur en dirhams]
 | Nombre de portes | Number of Doors | Effet probablement faible |
 
 **Variables à surveiller :** Origin, First Owner, Number of Doors et Condition ont
-des valeurs manquantes (3 à 14 %), à imputer dans le pipeline après le split.
+des valeurs manquantes (3 à 14 %), à imputer dans le pipeline après le split.  
+
+## E. Nettoyage et baseline (24/11/2026)
+
+**Nettoyage (notebook 02)**
+- 101 896 lignes au départ ; 25 483 sans prix et 966 hors de 5 000 à 1 000 000 MAD
+  retirées (règles métier) ; 1 692 doublons exacts supprimés ; reste 73 755 lignes.
+- Séparation 80 / 20 avec `random_state=42` : train 59 004, test 14 751.
+  Le test est mis de côté jusqu'à l'évaluation finale.
+
+**Conversions (src/features.py)**
+- `Mileage` : tranche texte vers milieu de tranche.
+- `Year` : texte vers nombre ; « 1980 ou plus ancien » devient 1980
+  (approximation : l'âge de ces voitures est sous-estimé).
+- `Fiscal Power` : « 8 CV » vers 8.
+- `Number of Doors` : déjà numérique (3.0 ou 5.0, 5 729 manquants).
+
+**Baseline (notebook 03)**
+- Pipeline scikit-learn : imputation + one-hot dans un `ColumnTransformer`.
+- MAE en validation croisée à 5 plis sur le train :
+  - dummy (médiane) : 74 979 MAD
+  - régression linéaire : 44 905 MAD (plis entre 44 500 et 45 419)
+- Interprétation : la baseline bat nettement le dummy mais reste imprécise.
+  Elle sert de référence pour les modèles suivants.
+
+**Limites connues**
+- Unité du prix : hypothèse MAD (non précisée par les auteurs).
+- Prix annoncé, pas prix de vente final.
+- Doublons : pas d'identifiant d'annonce, donc des annonces réellement
+  distinctes mais identiques ont pu être supprimées.
+- `Equipment` pas encore exploité.
+
+**Prochaines étapes :** EDA sur le train, `Equipment`, décision sur l'écrêtage
+de la cible ou le log du prix, puis Random Forest et XGBoost.

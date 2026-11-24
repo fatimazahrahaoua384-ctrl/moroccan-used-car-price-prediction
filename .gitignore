@@ -223,4 +223,6 @@ __marimo__/
 .streamlit/secrets.toml
 .env
 data/raw/*
-!data/raw/.gitkeep 
+!data/raw/.gitkeep  
+data/processed/*.csv
+!data/processed/.gitkeep 
