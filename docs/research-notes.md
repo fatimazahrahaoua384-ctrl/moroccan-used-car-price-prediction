@@ -245,4 +245,74 @@ de la cible ou le log du prix, puis Random Forest et XGBoost.
 - Âge 8 (sortie partielle), médiane (annonces) : Fiat 85 000 (134) ; Dacia 99 000 (281) ; Citroen 105 000 (86) ; Peugeot 109 000 (178) ; Renault 115 000 (274) ; Ford 144 000 (304) ; Hyundai 145 000 (163) ; Volkswagen 173 000 (443). Audi et Mercedes-Benz à 8 ans non visibles (sortie tronquée). Âge 12 : sortie tronquée, seules Volkswagen 125 000 (312), Audi 150 000 et Mercedes-Benz 155 000 sont visibles.
 - Constat : l'effet marque persiste à âge fixé. Groupe économique (Fiat, Dacia, Citroen, Renault, Peugeot) contre groupe premium (Volkswagen, Audi, Mercedes-Benz) ; à 3 ans, Mercedes-Benz vaut environ 3,8 fois Fiat.
 - Dacia (médiane globale 110 000) est bien dans le groupe économique à âge fixé : l'écart global venait de l'âge du parc. Kia : non vérifiée (hors top 10).
-- Lecture pour le modèle : l'effet marque est multiplicatif, ce qui renforce le choix du log du prix ; les interactions marque × âge sont à confier aux arbres (Random Forest, XGBoost). 
+- Lecture pour le modèle : l'effet marque est multiplicatif, ce qui renforce le choix du log du prix ; les interactions marque × âge sont à confier aux arbres (Random Forest, XGBoost).  
+## G. log du prix (notebook 05_models.ipynb)
+
+**Changement testé :** entraîner la régression linéaire sur log1p(prix)
+avec TransformedTargetRegressor. Mêmes features que le test D, même CV à 5 plis.
+Prédiction : non notée avant l'exécution.
+
+| Pli | Test D (prix brut) | Log du prix | Écart (MAD) |
+|---|---|---|---|
+| 1 | 44 747 | 34 772 | -9 975 |
+| 2 | 45 043 | 34 916 | -10 127 |
+| 3 | 44 708 | 34 438 | -10 270 |
+| 4 | 44 242 | 33 943 | -10 299 |
+| 5 | 44 433 | 33 713 | -10 720 |
+| **Moyenne** | **44 634** | **34 357** | **-10 277 (-23 %)** |
+
+**Lecture :** le gain est présent sur les 5 plis (environ 10 000 à 10 700 MAD).
+**Hypothèse :** sur le log, le modèle représente des effets multiplicatifs
+(ex. marque), plus proches de ce qu'on a vu dans l'EDA. Ce test seul
+ne prouve pas que c'est la cause du gain.
+
+**Pourquoi TransformedTargetRegressor ?** Avec seulement y = log1p(prix),
+la MAE serait calculée en unités logarithmiques, donc impossible à comparer
+à 44 634 MAD. TransformedTargetRegressor entraîne sur le log, puis applique
+expm1 aux prédictions : la MAE est calculée en MAD.
+
+**Décision :** garder le log pour la régression linéaire.
+La référence passe à 34 357 MAD. 
+## Random Forest
+
+**Prédiction (avant exécution) :** le Random Forest fera mieux que 34 357 MAD.
+**Raison (hypothèse) :** les arbres peuvent capter les interactions
+(ex. marque × âge) et la courbe âge/prix observées dans l'EDA. 
+### Résultat Random Forest (100 arbres, log du prix, random_state=42)
+
+MAE validation par pli : 17 829 ; 18 165 ; 18 007 ; 17 427 ; 17 821
+MAE validation moyenne : 17 850 MAD
+MAE train moyenne : 7 251 MAD
+Écart avec le linéaire avec log : -16 507 MAD (-48 %), mieux sur les 5 plis
+Durée : 84 min
+
+**Conclusion :** prédiction confirmée. Surapprentissage visible
+(écart validation - train d'environ 10 600 MAD).
+**Hypothèse :** le gain vient des interactions et des relations non linéaires
+(non vérifié séparément).
+**À vérifier :** annonces aux caractéristiques identiques. 
+### XGBoost, premier essai
+Réglages : n_estimators=500, learning_rate=0.1, max_depth=6, random_state=42
+MAE validation par pli : 19 814 ; 19 892 ; 19 687 ; 19 505 ; 19 709
+MAE validation moyenne : 19 721 MAD | MAE train : 17 426 MAD | durée : 32 s
+Écart avec le RF : +1 871 MAD, moins bon sur les 5 plis.
+**Décision :** le RF reste la référence. Tester des réglages XGBoost, car il est rapide. 
+### XGBoost : max_depth de 6 à 8
+Seul changement : max_depth=8.
+MAE validation par pli : 18 935 ; 19 007 ; 19 003 ; 18 586 ; 18 989
+MAE validation moyenne : 18 904 MAD | MAE train : 14 848 MAD
+Écart avec profondeur 6 : -817 MAD, mieux sur les 5 plis.
+Écart avec le RF : +1 054 MAD, moins bon sur les 5 plis.
+**Décision :** garder la profondeur 8 pour la suite. Le RF reste la référence. 
+### XGBoost : max_depth=10
+MAE validation par pli : 18 292 ; 18 408 ; 18 470 ; 17 804 ; 18 301
+MAE validation moyenne : 18 255 MAD | MAE train : 12 163 MAD | durée : 57 s
+Écart avec profondeur 8 : -649 MAD, mieux sur les 5 plis.
+Écart avec le RF : +405 MAD, moins bon sur les 5 plis.
+**Décision :** tester la profondeur 12. 
+### XGBoost : max_depth=12
+MAE validation par pli : 17 962 ; 17 825 ; 18 157 ; 17 520 ; 17 766
+MAE validation moyenne : 17 846 MAD | MAE train : 9 670 MAD | durée : 1 min 21 s
+Écart avec profondeur 10 : -409 MAD, mieux sur les 5 plis.
+Écart avec le RF : -4 MAD (XGBoost mieux sur 2 plis sur 5) : égalité pratique.
+**Décision :** retenir la profondeur 12 et continuer avec XGBoost, bien plus rapide.
