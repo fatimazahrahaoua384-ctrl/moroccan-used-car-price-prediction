@@ -315,4 +315,32 @@ MAE validation par pli : 17 962 ; 17 825 ; 18 157 ; 17 520 ; 17 766
 MAE validation moyenne : 17 846 MAD | MAE train : 9 670 MAD | durée : 1 min 21 s
 Écart avec profondeur 10 : -409 MAD, mieux sur les 5 plis.
 Écart avec le RF : -4 MAD (XGBoost mieux sur 2 plis sur 5) : égalité pratique.
-**Décision :** retenir la profondeur 12 et continuer avec XGBoost, bien plus rapide.
+**Décision :** retenir la profondeur 12 et continuer avec XGBoost, bien plus rapide. 
+### XGBoost : 1 000 arbres, learning_rate=0.05
+
+**Changements testés :** n_estimators de 500 à 1 000 et learning_rate de 0.1 à 0.05.
+Le reste est inchangé (max_depth=12, log du prix, mêmes features, CV à 5 plis).
+Les deux réglages changent ensemble : je ne pourrai pas séparer leurs effets.
+
+**Référence :** XGBoost profondeur 12 : MAE validation 17 846 MAD,
+MAE train 9 670 MAD, durée 1 min 21 s.
+
+**Prédiction (avant exécution) :** la MAE va baisser (sous 17 846 MAD).
+**Raison (hypothèse) :** chaque arbre corrige moins fortement les erreurs, mais
+il y a plus d'arbres. Les corrections sont donc plus progressives, ce qui devrait
+améliorer le résultat.  
+**Résultat**
+
+MAE validation par pli : 17 804 ; 17 791 ; 18 069 ; 17 471 ; 17 712
+MAE validation moyenne : 17 769 MAD | MAE train : 9 754 MAD | durée : 2 min 52 s
+Écart avec 500 arbres / 0.1 : -77 MAD (-0,4 %), mieux sur les 5 plis
+(de -34 à -158 MAD).
+Écart validation - train : 8 015 MAD (avant : 8 176 MAD).
+
+**Lecture :** prédiction confirmée : la MAE baisse. Le gain est régulier mais
+très faible, pour un calcul environ deux fois plus long. Le surapprentissage
+change peu. Ce test ne prouve pas la cause du gain.
+
+**Décision :** garder n_estimators=1000, learning_rate=0.05, max_depth=12.
+Arrêter les réglages pour l'instant et passer aux features.
+Ces scores viennent de la validation croisée, pas du test final.
