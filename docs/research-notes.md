@@ -343,4 +343,29 @@ change peu. Ce test ne prouve pas la cause du gain.
 
 **Décision :** garder n_estimators=1000, learning_rate=0.05, max_depth=12.
 Arrêter les réglages pour l'instant et passer aux features.
-Ces scores viennent de la validation croisée, pas du test final.
+Ces scores viennent de la validation croisée, pas du test final. 
+### Feature : kilométrage par an (km_per_year)
+
+**Changement testé :** ajouter km_per_year = mileage_num / max(car_age, 1).
+Le reste est inchangé (XGBoost 1 000 arbres, lr 0.05, profondeur 12).
+**Référence :** MAE validation 17 769 MAD.
+**Vérification :** 0 valeur infinie ; 2 162 NaN, comme mileage_num.
+**À surveiller :** au moins une voiture de 0 an affiche environ 165 000 km.
+**Prédiction (avant exécution, formulée avec l'aide du mentor) :** la MAE va
+rester presque pareille (proche de 17 769 MAD).
+**Raison (hypothèse) :** km_per_year est calculée à partir du kilométrage et de
+l'âge, que le modèle possède déjà. De plus, dans l'EDA, le lien entre kilométrage
+et prix à âge fixé est faible de 3 à 10 ans et reste modeste de 11 à 15 ans.
+ 
+**Résultat**
+
+MAE validation par pli : 17 711 ; 17 839 ; 18 003 ; 17 335 ; 17 765
+MAE validation moyenne : 17 731 MAD | MAE train : 9 545 MAD | durée : 2,9 min
+Écart avec la référence : -38 MAD (-0,2 %) ; par pli : -93 ; +48 ; -66 ; -136 ; +53
+(mieux sur 3 plis sur 5).
+Écart validation - train : 8 186 MAD (référence : 8 015 MAD).
+
+**Lecture :** prédiction confirmée : score presque identique, sans gain régulier.
+
+**Décision :** ne pas ajouter km_per_year au modèle. La colonne reste calculée
+dans features.py pour pouvoir reproduire le test. La référence reste 17 769 MAD.

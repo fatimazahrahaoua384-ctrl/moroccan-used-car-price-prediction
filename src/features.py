@@ -47,6 +47,8 @@ def add_features(df):
     suspect = (out["Mileage"] == "0 - 4 999") & (out["car_age"] >= 3)
     out["mileage_suspect"] = suspect.astype(int)
     out.loc[suspect, "mileage_num"] = np.nan 
+    # Kilométrage par an ; un âge de 0 compte comme 1 an
+    out["km_per_year"] = out["mileage_num"] / out["car_age"].clip(lower=1)
     eq = out["Equipment"].map(parse_equipment)
     out["n_equipment"] = eq.map(lambda L: len(L) if isinstance(L, list) else np.nan)
     for name in EQUIPMENT_VOCAB:
