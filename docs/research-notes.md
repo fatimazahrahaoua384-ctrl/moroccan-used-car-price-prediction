@@ -356,7 +356,7 @@ rester presque pareille (proche de 17 769 MAD).
 **Raison (hypothèse) :** km_per_year est calculée à partir du kilométrage et de
 l'âge, que le modèle possède déjà. De plus, dans l'EDA, le lien entre kilométrage
 et prix à âge fixé est faible de 3 à 10 ans et reste modeste de 11 à 15 ans.
- 
+
 **Résultat**
 
 MAE validation par pli : 17 711 ; 17 839 ; 18 003 ; 17 335 ; 17 765
@@ -368,4 +368,36 @@ MAE validation moyenne : 17 731 MAD | MAE train : 9 545 MAD | durée : 2,9 min
 **Lecture :** prédiction confirmée : score presque identique, sans gain régulier.
 
 **Décision :** ne pas ajouter km_per_year au modèle. La colonne reste calculée
-dans features.py pour pouvoir reproduire le test. La référence reste 17 769 MAD.
+dans features.py pour pouvoir reproduire le test. La référence reste 17 769 MAD. 
+## H. Analyse des erreurs (27/11/2026, notebook 06, train uniquement)
+
+Prédictions hors pli (5 plis) du modèle retenu.
+- MAE : 17 769 MAD (identique au score précédent) ; erreur absolue médiane :
+  7 700 MAD ; erreur relative médiane : 7,9 %.
+- Plus de 400 000 MAD : 1 985 voitures (3,4 %), MAE 129 700 MAD, environ 25 %
+  de la somme des erreurs absolues. Écart médian (prédit - annoncé) :
+  environ -43 200 MAD (sous-estimation).
+- Moins de 50 000 MAD : erreur relative médiane 13,6 %.
+- Plus de 20 ans : erreur relative médiane 13,1 %.
+- Mercedes-Benz : erreur relative médiane 10,5 % (la plus élevée des
+  10 marques les plus fréquentes).
+- Les 20 plus grosses erreurs ont un prix annoncé de 950 000 à 1 000 000 MAD.
+  Plusieurs sont très peu crédibles (ex. Logan de 6 ans à 980 000). Erreurs de
+  saisie ou prix fictifs probables (non vérifié).
+- Pour ces 20 lignes, les prédictions vont de 23 161 à 117 917 MAD
+  (ex. Logan de 6 ans : annoncé 980 000, prédit 23 161). Elles représentent
+  environ 1,7 % de la somme des erreurs absolues, soit environ 300 MAD de MAE.
+
+**Limite :** le seuil maximum unique de 1 000 000 MAD laisse passer des prix
+douteux sur des modèles économiques.
+**Piste d'amélioration :** règle de prix selon le modèle et l'âge, à valider
+sans fuite de données. Aucune ligne supprimée à cause de son erreur.
+
+## I. Modèle figé avant le test final
+
+XGBoost : n_estimators=1000, learning_rate=0.05, max_depth=12, random_state=42,
+log du prix, sans km_per_year (défini dans src/model.py).
+Référence en validation croisée : MAE 17 769 MAD.
+Non testés : Condition ordinale, indicateur « 44 ans » ; non retestés avec les
+arbres : mileage_suspect, « Inconnu », n_equipment.
+Aucun changement du modèle après lecture du score sur le test.
