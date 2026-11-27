@@ -400,4 +400,21 @@ log du prix, sans km_per_year (défini dans src/model.py).
 Référence en validation croisée : MAE 17 769 MAD.
 Non testés : Condition ordinale, indicateur « 44 ans » ; non retestés avec les
 arbres : mileage_suspect, « Inconnu », n_equipment.
-Aucun changement du modèle après lecture du score sur le test.
+Aucun changement du modèle après lecture du score sur le test. 
+**Prédiction (avant lecture du score) :** le résultat sera très bon, avec une
+MAE sur le test proche de la validation croisée (17 769 MAD) ou meilleure. 
+## J. Évaluation finale (27/11/2026, notebook 07_final_test.ipynb)
+
+Modèle figé, entraîné sur tout le train (59 004), évalué une fois sur le test
+(14 751).
+- MAE : 17 722 MAD (validation croisée : 17 769).
+- Erreur absolue médiane : 7 502 MAD.
+- Erreur relative médiane : 7,7 %.
+- Dummy (médiane du train) : 75 566 MAD. Le modèle réduit la MAE d'environ 77 %.
+
+**Lecture :** score très proche de la validation croisée ; prédiction « très bien »
+confirmée.
+**Limites :** test issu du même dataset ; prix annoncés et non prix de vente ;
+unité MAD par hypothèse ; quasi-doublons non vérifiés ; prix douteux possibles ;
+erreurs plus fortes sur les voitures chères dans l'analyse sur le train.
+Aucun changement du modèle après ce résultat. 
